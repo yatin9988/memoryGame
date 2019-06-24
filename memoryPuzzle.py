@@ -158,6 +158,36 @@ def drawIcon(shape,color,boxx,boxy): # this function makes use of the pygame dra
             pygame.draw.line(DISPLAYSURF,color,(left+i,top+BOXSIZE-1),(left+BOXSIZE-1,top+i)) #draws the lower lines inside the square
     elif shape==OVAL: #checks if it is an oval shape
         pygame.draw.ellipse(DISPLAYSURF,color,(left,top+quarter,BOXSIZE,half)) #draws an ellipse
-def getShapeAndColor(board,boxx,boxy):
-    return board[boxx][boxy][0],board[boxx][boxy][1]
+        
+def getShapeAndColor(board,boxx,boxy): #this function returns the shape and color 
+    return board[boxx][boxy][0],board[boxx][boxy][1] #board is a 2dimensional list ie there is a tuple inside a list which is further inside a list . we can access a particular tuple by board[x][y] and then shape is at 0 and color at 1
+
+def drawBoxCovers(board,boxes,coverage): #this function draws covers over the box if necessary
+    for box in boxes: #box is a 2dimensional list which simply contains the box coordinates ie every list inside the list contains 2 values the x and y box coordinates
+        left,top=leftTopCoordsOfBox(box[0],box[1]) #here we convert the box coordinates to normal pixels for the ease of drawing
+        pygame.draw.rect(DISPLAYSURF,BGCOLOR,(left,top,BOXSIZE,BOXSIZE)) #this makes sure that when we draw the icon at the position it first paints it in the same background color so that there is no sort of overlapping and just to be safe
+        shape,color=getShapeAndColor(board,box[0],box[1]) #his function returns the shape and color of the of the given box coordinate
+        drawIcon(shape,color,box[0],box[1]) #here we draw that icon at their respective position
+        if coverage>0: #if coverage is some positive value
+            pygame.draw.rect(DISPLAYSURF,BOXCOLOR,(left,top,coverage,BOXSIZE)) #then cover it with the boxcolor
+    pygame.display.update() #this makes the changes appear on screen and also beacuse the main function will not call it
+    FPSCLOCK.tick(FPS) # controls the speed of drawing ie drawing the number of frames per second
+    
+def revealBoxesAnimation(board,boxesToReveal): #animations are nothing but drawing frames with little changes and changing between them at an insanely fast rate
+    for coverage in range(BOXSIZE,(-REVEALSPEED)-1,-REVEALSPEED): # this line decides different frames
+        drawBoxCovers(board,boxesToReveal,coverage) # this line orders these frames to be displayed
+
+def coverBoxesAnimation(board,boxesToCover): # similar functionality with respect to the previous function but just the work is opposite
+    for coverage in range(0,BOXSIZE+REVEALSPEED,REVEALSPEED): #this line decides different frames
+        drawBoxCovers(board,boxesToCover,coverage) #this line orders these frames to be displayed
+
+def drawBoard(board,revealed):  #this functions draws the game state onto the screen
+    for boxx in range(BOARDWIDTH): # loops through columns
+        for boxy in range(BOARDHEIGHT): # lops through rows
+            left,top=leftTopCoordsOfBox(boxx,boxy) #get the coordinates of the top and left side if the box
+            if not revealed[boxx][boxy]: # if the box is uncovered it will false
+                pygame.draw.rect(DISPLAYSURF,BOXCOLOR,(left,top,BOXSIZE,BOXSIZE)) #if it is covered then draw a white box over it
+            else: #if it is uncovered
+                shape,color=getShapeAndColor(board,boxx,boxy) #get its shape and color
+                drawIcon(shape,color,boxx,boxy) # draw it onto the scrren
 
