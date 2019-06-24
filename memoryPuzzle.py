@@ -58,7 +58,7 @@ def main():
     revealedBoxes=generateRevealedBoxesData(False) #this returns a boolean value of true or false in a 2d list .true means uncovered and false means covered
     DISPLAYSURF.fill(BGCOLOR)#colors the screen with the specified bgcolor
     firstSelection=None #it keeps tract of whether the first icon of a partiular pair is clicked or the second icon
-    startGameAnimation(mainboard) #gives some time in the beginning and shows the uncovered boxes for a shor interval of time
+    startGameAnimation(mainboard) #gives some time in the beginning and shows the uncovered boxes for a short interval of time
     while True: #game loop
         mouseClicked=False #checks whether the mouse is clicked or not
         DISPLAYSURF.fill(BGCOLOR) #again fills the background
@@ -74,7 +74,7 @@ def main():
                 mouseClicked=True #make mouse pressed point to true
             boxx,boxy=getBoxAtPixel(mousex,mousey) #this function returns the the coordinated of box on the board
             if boxx!=None and boxy!=None: # if the cursor was not on any valid position None will be returned for that coordinate and we are interested only on checking the condition if both the coordinates are valid
-                if not revealedBoxes[boxx][boxy]: #checks from a 2d list of boolean values if the box s covered or not
+                if not revealedBoxes[boxx][boxy]: #checks from a 2d list of boolean values if the box is covered or not
                     drawHighlightBox(boxx,boxy)#if the box is uncovered highlight its boundary
                 if not revealedBoxes[boxx][boxy] and mouseClicked: #if the box is not revealed and clicked on
                     revealBoxesAnimation(mainboard,[(boxx,boxy)]) #this function reveals the boxes
@@ -97,4 +97,29 @@ def main():
                         firstSelection=None
                     pygame.display.update()
                     FPSCLOCK.tick(FPS)
+def generateRevealedBoxesData(val):
+    revealedBoxes=[]
+    for i in range(BOARDWIDTH):
+        revealedBoxes.append([val]*BOARDHEIGHT)
+    return revealedBoxes
+def getRandomizedBoard():
+    icons=[]
+    for color in ALLCOLORS:
+        for shape in ALLSHAPES:
+            icons.append((shape,color))
+    random.shuffle(icons)
+    icons=icons*2
+    random.shuffle(icons)
+    board=[]
+    for x in range(BOARDWIDTH):
+        column=[]
+        for y in range(BOARDHEIGHT):
+            column.append(icons[0])
+            del icons[0]
+        board.append(column)    
+    return board
+def leftTopCoordsOfBox(boxx,boxy):
+    left=boxx*(BOXSIZE+GAPSIZE)+XMARGIN
+    top=boxy*(BOXSIZE+GAPSIZE)+YMARGIN
+    return (left,top)
  
