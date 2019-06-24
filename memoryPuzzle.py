@@ -46,6 +46,7 @@ OVAL="oval"
 ALLCOLORS=(RED,YELLOW,BLUE,GREEN,ORANGE,PURPLE,CYAN)
 ALLSHAPES=(DONUT,SQUARE,DIAMOND,LINES,OVAL)
 assert len(ALLCOLORS)*len(ALLSHAPES)*2==BOARDWIDTH*BOARDHEIGHT,'number of icons are not enough'
+
 def main():
     global DISPLAYSURF,FPSCLOCK #these are declared as global so that other functions can also access them
     pygame.init() #before calling any pygame function call pygame.init()
@@ -97,11 +98,15 @@ def main():
                         firstSelection=None #even if the 2 boxes selected were right or wrong we need to create a new platform for selection 
                     pygame.display.update() #updates the game state and draws it to the screen
                     FPSCLOCK.tick(FPS) #controls the speed of the game
+
+                    
 def generateRevealedBoxesData(val):# this function will return a 2d list containing boolean values ,false for covered and true foe uncovered
     revealedBoxes=[] #empty list
     for i in range(BOARDWIDTH): #runs for 10 times
         revealedBoxes.append([val]*BOARDHEIGHT) #creates a list of size seven and appends it into the list for 10 times
     return revealedBoxes #returns the generated list
+
+
 def getRandomizedBoard(): #this function will generate a randomly new 2d list every time the user starts the game
     icons=[] #empty list
     for color in ALLCOLORS: #runs ALLCOLOR.length time
@@ -118,8 +123,41 @@ def getRandomizedBoard(): #this function will generate a randomly new 2d list ev
             del icons[0] #simultaneously deletes the first tuple in the icons least so that all icons shift one to left
         board.append(column) # inserts 7 items in a list and then appends these 7 items to a new list.repeat the process 10 times   
     return board #return the board
+
+
 def leftTopCoordsOfBox(boxx,boxy): #this function returns the coordinates of the top left and right coordinates of the box by referring to the box coordinates
     left=boxx*(BOXSIZE+GAPSIZE)+XMARGIN #top left coordinate
     top=boxy*(BOXSIZE+GAPSIZE)+YMARGIN #top coordinate
     return (left,top) #return the tuple of coordinates
- 
+
+
+def getBoxAtPixel(x,y): #this functions takes the mouse coordinates and returns the corresponding box coordinates
+    for boxx in range(BOARDWIDTH): #runs the outer loop for 10 times
+        for boxy in range(BOARDHEIGHT): #runs the inner loop for 7 times
+            left,top=leftTopCoordsOfBox(boxx,boxy) # first returns the top and left coordinates of each and every possible box coordinate  
+            boxRect=pygame.Rect(left,top,BOXSIZE,BOXSIZE) # makes a rectangular object with the given coordinates
+            if boxRect.collidepoint(x,y): # checks if the given points lie the area of the rectangular object 
+                return (boxx,boxy) # if true return the box coordinate
+    return (None,None) # else return (None,None)
+
+
+def drawIcon(shape,color,boxx,boxy): # this function makes use of the pygame drawing functions and draws different shapes onto the screen
+    quarter=int(BOXSIZE*0.25) #syntactic sugar
+    half=int(BOXSIZE*0.5) #syntactic sugar
+    left,top=leftTopCoordsOfBox(boxx,boxy) #getting the left and top coordinates of the box
+    if shape==DONUT: #checking if the shape is a donut if it is true then execute the below statements
+        pygame.draw.circle(DISPLAYSURF,color,(left+half,top+half),half-5) #draws a bigger circle 
+        pygame.draw.circle(DISPLAYSURF,BGCOLOR,(left+half,top+half),quarter-5) # draws a smaller circle to make the bigger circle look like a donut
+    elif shape==SQUARE: # checking if the shape is a square if it is true then execute the below statements
+        pygame.draw.rect(DISPLAYSURF,color,(left+quarter,top+quarter,BOXSIZE-half,BOXSIZE-half)) #draws a rectangle
+    elif shape==DIAMOND: #similarly checks for the diamond shape 
+        pygame.draw.polygon(DISPLAYSURF,color,((left+half,top),(left+BOXSIZE-1,top+half),(left+half,top+BOXSIZE-1),(left,top+half))) #draws a polygon
+    elif shape==LINES: # checks for drawing lines
+        for i in range(0,BOXSIZE,4): #loop run 10 times
+            pygame.draw.line(DISPLAYSURF,color,(left,top+i),(left+i,top)) #draws the upper lines inside the square
+            pygame.draw.line(DISPLAYSURF,color,(left+i,top+BOXSIZE-1),(left+BOXSIZE-1,top+i)) #draws the lower lines inside the square
+    elif shape==OVAL: #checks if it is an oval shape
+        pygame.draw.ellipse(DISPLAYSURF,color,(left,top+quarter,BOXSIZE,half)) #draws an ellipse
+def getShapeAndColor(board,boxx,boxy):
+    return board[boxx][boxy][0],board[boxx][boxy][1]
+
