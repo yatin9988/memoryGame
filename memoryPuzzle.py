@@ -79,47 +79,47 @@ def main():
                 if not revealedBoxes[boxx][boxy] and mouseClicked: #if the box is not revealed and clicked on
                     revealBoxesAnimation(mainboard,[(boxx,boxy)]) #this function reveals the boxes
                     revealedBoxes[boxx][boxy]=True #this makes this change permanent
-                    if firstSelection==None:
-                        firstSelection=(boxx,boxy)
-                    else:
-                        icon1shape,icon1color=getShapeAndColor(mainBoard,firstSelection[0],firstSelection[1])
-                        icon2shape,icon2color=getShapeAndColor(mainBoard,boxx,boxy)                        
-                        if icon1shape!=icon2shape or icon1color!=icon2color:
-                            pygame.time.wait(1000)
-                            coverBoxesAnimation(mainBoard,[(firstSelection[0],firstSelection[1])],[(boxx,boxy)])
-                            revealedBoxes[boxx][boxy]=False
-                            revealedBoxes[firstSelection[0]][firstSelection[1]]=False
-                        elif hasWon(revealedBoxes):
-                            gameWonAnimation(mainBoard)
-                            pygame.time.wait(2000)
-                            pygame.quit()
-                            sys.exit()
-                        firstSelection=None
-                    pygame.display.update()
-                    FPSCLOCK.tick(FPS)
-def generateRevealedBoxesData(val):
-    revealedBoxes=[]
-    for i in range(BOARDWIDTH):
-        revealedBoxes.append([val]*BOARDHEIGHT)
-    return revealedBoxes
-def getRandomizedBoard():
-    icons=[]
-    for color in ALLCOLORS:
-        for shape in ALLSHAPES:
-            icons.append((shape,color))
-    random.shuffle(icons)
-    icons=icons*2
-    random.shuffle(icons)
-    board=[]
-    for x in range(BOARDWIDTH):
-        column=[]
-        for y in range(BOARDHEIGHT):
-            column.append(icons[0])
-            del icons[0]
-        board.append(column)    
-    return board
-def leftTopCoordsOfBox(boxx,boxy):
-    left=boxx*(BOXSIZE+GAPSIZE)+XMARGIN
-    top=boxy*(BOXSIZE+GAPSIZE)+YMARGIN
-    return (left,top)
+                    if firstSelection==None: #if the first box of a pair was selected we need to store the box cordinates of it
+                        firstSelection=(boxx,boxy) #storing the box coordinates if it was the first icon of a pair
+                    else: #or if it was the second icon of a pair then theses instructions will be followed
+                        icon1shape,icon1color=getShapeAndColor(mainBoard,firstSelection[0],firstSelection[1]) #getting the shape and color of the first selected icon
+                        icon2shape,icon2color=getShapeAndColor(mainBoard,boxx,boxy) #getting the shape and icon of the second selected icon                       
+                        if icon1shape!=icon2shape or icon1color!=icon2color: #if either of them dont match
+                            pygame.time.wait(1000) #wait for 1000 milliseconds or 1 second
+                            coverBoxesAnimation(mainBoard,[(firstSelection[0],firstSelection[1])],[(boxx,boxy)]) #coverBoxesAnimation will cover the two selected boxes with the help of box coordinates
+                            revealedBoxes[boxx][boxy]=False #also in order to make these changes permanent we need to make changes in the 2 dimensional list
+                            revealedBoxes[firstSelection[0]][firstSelection[1]]=False # this line does the same
+                        elif hasWon(revealedBoxes): #well if the two boxes selected were right changes have already been made and hence nothing needs to be done except when the user has selected all the boxes correctly
+                            gameWonAnimation(mainBoard) #this function will do something when the user winds the game
+                            pygame.time.wait(2000) #wait for 2000 milliseconds ie 2 seconds
+                            pygame.quit() # close the pygame module
+                            sys.exit() # exit the game
+                        firstSelection=None #even if the 2 boxes selected were right or wrong we need to create a new platform for selection 
+                    pygame.display.update() #updates the game state and draws it to the screen
+                    FPSCLOCK.tick(FPS) #controls the speed of the game
+def generateRevealedBoxesData(val):# this function will return a 2d list containing boolean values ,false for covered and true foe uncovered
+    revealedBoxes=[] #empty list
+    for i in range(BOARDWIDTH): #runs for 10 times
+        revealedBoxes.append([val]*BOARDHEIGHT) #creates a list of size seven and appends it into the list for 10 times
+    return revealedBoxes #returns the generated list
+def getRandomizedBoard(): #this function will generate a randomly new 2d list every time the user starts the game
+    icons=[] #empty list
+    for color in ALLCOLORS: #runs ALLCOLOR.length time
+        for shape in ALLSHAPES: #runs ALLSHAPES.length time
+            icons.append((shape,color)) #append a possible pair into the list
+    random.shuffle(icons) #shuffle the tuples present in a list
+    icons=icons*2 #string replication ie increase the contents of a string by 2 times
+    random.shuffle(icons) #again shuffle the items of the final list 
+    board=[] #empty list
+    for x in range(BOARDWIDTH): #runs 10 times
+        column=[] #empty list
+        for y in range(BOARDHEIGHT): #runs 7 times
+            column.append(icons[0]) #appends the first tuple into the columns list
+            del icons[0] #simultaneously deletes the first tuple in the icons least so that all icons shift one to left
+        board.append(column) # inserts 7 items in a list and then appends these 7 items to a new list.repeat the process 10 times   
+    return board #return the board
+def leftTopCoordsOfBox(boxx,boxy): #this function returns the coordinates of the top left and right coordinates of the box by referring to the box coordinates
+    left=boxx*(BOXSIZE+GAPSIZE)+XMARGIN #top left coordinate
+    top=boxy*(BOXSIZE+GAPSIZE)+YMARGIN #top coordinate
+    return (left,top) #return the tuple of coordinates
  
