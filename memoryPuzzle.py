@@ -55,11 +55,11 @@ def main():
     pygame.display.set_caption('MEMORY GAME') #caption
     mousex=0 #stores mouse's x coordinate,initialised with 0
     mousey=0 #stores mouse's y coordinate,initialsed with 0
-    mainboard=getRandomizedBoard() #this will return the complete board representation in the form of a 2dimensional list
+    mainBoard=getRandomizedBoard() #this will return the complete board representation in the form of a 2dimensional list
     revealedBoxes=generateRevealedBoxesData(False) #this returns a boolean value of true or false in a 2d list .true means uncovered and false means covered
     DISPLAYSURF.fill(BGCOLOR)#colors the screen with the specified bgcolor
     firstSelection=None #it keeps tract of whether the first icon of a partiular pair is clicked or the second icon
-    startGameAnimation(mainboard) #gives some time in the beginning and shows the uncovered boxes for a short interval of time
+    startGameAnimation(mainBoard) #gives some time in the beginning and shows the uncovered boxes for a short interval of time
     while True: #game loop
         mouseClicked=False #checks whether the mouse is clicked or not
         DISPLAYSURF.fill(BGCOLOR) #again fills the background
@@ -78,7 +78,7 @@ def main():
                 if not revealedBoxes[boxx][boxy]: #checks from a 2d list of boolean values if the box is covered or not
                     drawHighlightBox(boxx,boxy)#if the box is uncovered highlight its boundary
                 if not revealedBoxes[boxx][boxy] and mouseClicked: #if the box is not revealed and clicked on
-                    revealBoxesAnimation(mainboard,[(boxx,boxy)]) #this function reveals the boxes
+                    revealBoxesAnimation(mainBoard,[(boxx,boxy)]) #this function reveals the boxes
                     revealedBoxes[boxx][boxy]=True #this makes this change permanent
                     if firstSelection==None: #if the first box of a pair was selected we need to store the box cordinates of it
                         firstSelection=(boxx,boxy) #storing the box coordinates if it was the first icon of a pair
@@ -87,7 +87,7 @@ def main():
                         icon2shape,icon2color=getShapeAndColor(mainBoard,boxx,boxy) #getting the shape and icon of the second selected icon                       
                         if icon1shape!=icon2shape or icon1color!=icon2color: #if either of them dont match
                             pygame.time.wait(1000) #wait for 1000 milliseconds or 1 second
-                            coverBoxesAnimation(mainBoard,[(firstSelection[0],firstSelection[1])],[(boxx,boxy)]) #coverBoxesAnimation will cover the two selected boxes with the help of box coordinates
+                            coverBoxesAnimation(mainBoard,[[firstSelection[0],firstSelection[1]],[boxx,boxy]]) #coverBoxesAnimation will cover the two selected boxes with the help of box coordinates
                             revealedBoxes[boxx][boxy]=False #also in order to make these changes permanent we need to make changes in the 2 dimensional list
                             revealedBoxes[firstSelection[0]][firstSelection[1]]=False # this line does the same
                         elif hasWon(revealedBoxes): #well if the two boxes selected were right changes have already been made and hence nothing needs to be done except when the user has selected all the boxes correctly
@@ -124,10 +124,15 @@ def getRandomizedBoard(): #this function will generate a randomly new 2d list ev
         board.append(column) # inserts 7 items in a list and then appends these 7 items to a new list.repeat the process 10 times   
     return board #return the board
 
+def splitIntoGroupsOf(groupSize,theList): # splits a list into a 2dimensional list
+    result=[] #empty list
+    for i in range(0,len(theList),groupSize): #loop
+        result.append(theList[i:i+groupSize]) #generates and appends a slice of the original list into the empty list of groupsize  
+    return result    
 
 def leftTopCoordsOfBox(boxx,boxy): #this function returns the coordinates of the top left and right coordinates of the box by referring to the box coordinates
-    left=boxx*(BOXSIZE+GAPSIZE)+XMARGIN #top left coordinate
-    top=boxy*(BOXSIZE+GAPSIZE)+YMARGIN #top coordinate
+    left=boxx*(BOXSIZE+BOXGAP)+XMARGIN #top left coordinate
+    top=boxy*(BOXSIZE+BOXGAP)+YMARGIN #top coordinate
     return (left,top) #return the tuple of coordinates
 
 
@@ -189,5 +194,41 @@ def drawBoard(board,revealed):  #this functions draws the game state onto the sc
                 pygame.draw.rect(DISPLAYSURF,BOXCOLOR,(left,top,BOXSIZE,BOXSIZE)) #if it is covered then draw a white box over it
             else: #if it is uncovered
                 shape,color=getShapeAndColor(board,boxx,boxy) #get its shape and color
-                drawIcon(shape,color,boxx,boxy) # draw it onto the scrren
+                drawIcon(shape,color,boxx,boxy) # draw it onto the screen
 
+def drawHighlightBox(boxx,boxy): #this function highlights the box on which we are hovering
+    left,top=leftTopCoordsOfBox(boxx,boxy) #get the pixel coordinates
+    pygame.draw.rect(DISPLAYSURF,HIGHLIGHTCOLOR,(left-5,top-5,BOXSIZE+10,BOXSIZE+10),4) #draw a rectangle of width 4 around the box
+
+def startGameAnimation(board): #this function is called in the beggining of the game and uncovers and then quickly covers the boxes after a few seconds
+    coveredBoxes=generateRevealedBoxesData(False) #creates a 2dimensional list of boolean values True for uncovered and false for covered
+    boxes=[] #empty list
+    for x in range(BOARDWIDTH): #loop
+        for y in range(BOARDHEIGHT): #loop
+            boxes.append((x,y)) #append all the possible tuples into the list
+    random.shuffle(boxes) #shuffle all the tuples
+    boxGroups=splitIntoGroupsOf(8,boxes) #splits the list of tuples into a 2dimensional list such that each inner list has 8 items or less because we will reveal 8 items at a time
+    drawBoard(board,coveredBoxes) #draws the game state onto the screen
+    for boxGroup in boxGroups: #iterates through the first list
+        revealBoxesAnimation(board,boxGroup) #reveals
+        coverBoxesAnimation(board,boxGroup) #hides
+def gameWonAnimation(board): #when the user wins this function is called
+    coveredBoxes=generateRevealedBoxesData(True) #since he has won now all the boolean values will be set to true
+    color1=LIGHTBGCOLOR #syntactic sugar
+    color2=BGCOLOR #syntactic sugar
+    for i in range(13): #loops 12 times
+        color1,color2=color2,color1 #swapping colors
+        DISPLAYSURF.fill(color1) #fills the background
+        drawBoard(board,coveredBoxes) #draws the final game state onto to the screen when the background color has changed
+        pygame.display.update() #updates it so that it is visible on the screen
+        pygame.time.wait(300) #waits for 300 milliseconds
+
+def hasWon(revealedBoxes): #function checks whether the user has won or not
+    for i in revealedBoxes: # i now is a 2d list
+        if False in i: #checks if there is a False in the list i (in operator)
+            return False # if true return false
+    return True    #return true
+
+if __name__ == '__main__':
+    main()
+    
