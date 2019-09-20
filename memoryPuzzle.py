@@ -229,6 +229,7 @@ def hasWon(revealedBoxes): #function checks whether the user has won or not
             return False # if true return false
     return True    #return true
 
+## calling function
 if __name__ == '__main__':
     main()
     
