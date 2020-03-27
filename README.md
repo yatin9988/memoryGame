@@ -1,5 +1,8 @@
 # CABO CARD
 
+|[DOCUMENTATION](https://docs.google.com/document/d/19gY5NmwvQqfZmJ5ssY5l50QmcEl40KyuM_ZqwJi1Bks/edit?usp=sharing "Google's Docs")       |
+| ------------- |
+
 >The Cabo Card is based on the Chinese game Mao appeared during the nineteenth century.
 >Mao (or Mau) is a card game of the shedding family, in which the aim is to get rid of all of the cards in hand without breaking certain unspoken rules.
 >The game is from a subset of the Stops family and is similar in structure to the card game Uno or Crazy Eights.
@@ -9,8 +12,7 @@
 
 
 
-|[DOCUMENTATION](https://docs.google.com/document/d/19gY5NmwvQqfZmJ5ssY5l50QmcEl40KyuM_ZqwJi1Bks/edit?usp=sharing "Google's Docs")       |
-| ------------- |
+
 
 
 ![alt text](https://lh3.googleusercontent.com/j7mE-7swXtAgRV9lWIsAF6U4XxRmUIOgoTAKjqICxSCDr__Q42wqBKJro28tlyhE9v3IJwunVWTj52tSszcBd69RdGz8pjC9ER38ORHB=s799)
