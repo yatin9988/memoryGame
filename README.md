@@ -7,8 +7,10 @@
 >In a typical play, 12 cards are placed face-up and the players search for a set: three cards whose designs, for each attribute, are either all the same or all different.
 
 
-[DOCUMENTATION](https://docs.google.com/document/d/19gY5NmwvQqfZmJ5ssY5l50QmcEl40KyuM_ZqwJi1Bks/edit?usp=sharing "Google's Docs")
 
+
+|[DOCUMENTATION](https://docs.google.com/document/d/19gY5NmwvQqfZmJ5ssY5l50QmcEl40KyuM_ZqwJi1Bks/edit?usp=sharing "Google's Docs")       |
+| ------------- |
 
 
 ![alt text](https://lh3.googleusercontent.com/j7mE-7swXtAgRV9lWIsAF6U4XxRmUIOgoTAKjqICxSCDr__Q42wqBKJro28tlyhE9v3IJwunVWTj52tSszcBd69RdGz8pjC9ER38ORHB=s799)
