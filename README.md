@@ -16,6 +16,8 @@
 https://github.com/varunswarup0/cabo-card/blob/master/3v2315.gif
 
 ![alt text](https://github.com/varunswarup0/cabo-card/blob/master/caboCard.webp)
+![alt text](https://github.com/varunswarup0/cabo-card/blob/master/3v2315.gif) | 
+------------ |
 ![alt text](https://github.com/varunswarup0/cabo-card/blob/master/3v2315.gif)
 ![alt text](https://github.com/varunswarup0/cabo-card/blob/master/3v2315.gif)
 ![alt text](https://github.com/varunswarup0/cabo-card/blob/master/3v2315.gif)
